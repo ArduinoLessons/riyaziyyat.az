@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="style.css">
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<style>
+body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;background:#f0fdf4;margin:0}
+.card{background:#fff;padding:20px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.1);width:320px}
+h2{text-align:center}
+input{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:6px}
+button{width:100%;padding:10px;border:none;background:#16a34a;color:white;border-radius:6px;font-weight:bold;cursor:pointer}
+a{display:block;text-align:center;margin-top:10px;color:#16a34a;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>Login</h2>
+<form id="loginForm">
+  <input type="text" id="email" placeholder="E-mail / Müəllim adı" required>
+  <input type="password" id="pass" placeholder="Şifrə" required>
+  <button type="submit">Giriş</button>
+</form>
+<a href="register.html">Hesabınız yoxdur? Qeydiyyat</a>
+</div>
+
+<script>
+const teacherLogin = { email:"Anar", pass:"Anar2025" };
+
+document.getElementById("loginForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("pass").value.trim();
+
+    // müəllim login
+    if(email === teacherLogin.email && pass === teacherLogin.pass){
+        window.location.href = "dashboard_teacher.html";
+        return;
+    }
+
+    // şagird login
+    const students = JSON.parse(localStorage.getItem("students")||"[]");
+    const student = students.find(s => s.email === email && s.pass === pass);
+    if(student){
+        localStorage.setItem("currentStudent", JSON.stringify(student));
+        window.location.href = "dashboard_student.html";
+    } else {
+        alert("Email və ya şifrə yanlışdır!");
+    }
+});
+</script>
+</body>
+</html>
