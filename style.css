@@ -1,0 +1,101 @@
+/* Ümumi bədən stili */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Başlıqlar */
+h2, h3 {
+    text-align: center;
+    color: #111827;
+}
+
+/* Kart üslubu (contest, sual və s.) */
+.card, .test, #questionsContainer > div {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin: 15px 0;
+}
+
+/* Inputlar və selectlər */
+input[type=text], input[type=password], input[type=email], input[type=number], select {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0 12px 0;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Buttonlar */
+button {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    font-size: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #1e40af;
+}
+
+/* Form linkləri */
+a {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Sual variantları (radio, checkbox) */
+.radio-option, .checkbox-option {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+}
+
+.radio-option input, .checkbox-option input {
+    margin-right: 8px;
+}
+
+/* Submit bölməsi */
+form > button {
+    margin-top: 15px;
+}
+
+/* Hover effekt kart üçün */
+.test:hover, .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* Responsive qısa ekranlar üçün */
+@media screen and (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    .card, .test {
+        padding: 15px;
+    }
+    input, select, button {
+        font-size: 13px;
+        padding: 8px;
+    }
+}

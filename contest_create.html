@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>Müəllim Paneli - Contest Yarat</title>
+<style>
+body{font-family:sans-serif;background:#f0fdf4;margin:0;padding:20px}
+h2{text-align:center;margin-bottom:20px}
+input, select, button{padding:6px;margin:4px 0;border-radius:4px;border:1px solid #ccc;font-size:14px}
+button{background:#2563eb;color:#fff;border:none;cursor:pointer}
+#questionsContainer div{border:1px solid #ddd;padding:10px;margin:10px 0;border-radius:6px;background:#fff}
+label{display:block;margin-top:6px}
+.group-option{display:flex;align-items:center;margin:3px 0}
+.group-option input{margin-right:6px}
+</style>
+</head>
+<body>
+
+<h2>Müəllim Paneli - Contest Yarat</h2>
+
+<label>Contest Başlığı:</label>
+<input type="text" id="contestTitle" placeholder="Başlıq" required>
+
+<label>Sualların sayı:</label>
+<input type="number" id="questionCount" min="1" placeholder="Sual sayı">
+<button id="generateQuestions">+</button>
+
+<div id="questionsContainer"></div>
+
+<label>Qruplar:</label>
+<div id="groupCheckboxes">
+  <label class="group-option"><input type="checkbox" value="10(1,3)"> 10(1,3)</label>
+  <label class="group-option"><input type="checkbox" value="10(2,4)"> 10(2,4)</label>
+  <label class="group-option"><input type="checkbox" value="9(1,3)"> 9(1,3)</label>
+  <label class="group-option"><input type="checkbox" value="10S"> 10S</label>
+</div>
+
+<label>Başlama vaxtı:</label>
+<input type="datetime-local" id="startTime">
+
+<label>Bitmə vaxtı:</label>
+<input type="datetime-local" id="endTime">
+
+<button id="submitContest">Contest Yarat</button>
+
+<script>
+document.getElementById("generateQuestions").addEventListener("click", function(){
+    const count = parseInt(document.getElementById("questionCount").value);
+    const container = document.getElementById("questionsContainer");
+    container.innerHTML = "";
+
+    for(let i=1;i<=count;i++){
+        const qDiv = document.createElement("div");
+
+        const label = document.createElement("label");
+        label.innerText = `Sual ${i}:`;
+        qDiv.appendChild(label);
+
+        const input = document.createElement("input");
+        input.type="text";
+        input.placeholder="Sual mətni";
+        input.required = true;
+        qDiv.appendChild(input);
+
+        const typeSelect = document.createElement("select");
+        typeSelect.innerHTML = `<option value="open">Açıq</option><option value="closed">Qapalı</option>`;
+        qDiv.appendChild(typeSelect);
+
+        const variantContainer = document.createElement("div");
+        variantContainer.style.marginTop="6px";
+        qDiv.appendChild(variantContainer);
+
+        typeSelect.addEventListener("change", function(){
+            variantContainer.innerHTML = "";
+            if(this.value==="open"){
+                const answerInput = document.createElement("input");
+                answerInput.type="text";
+                answerInput.placeholder="Düzgün cavab";
+                variantContainer.appendChild(answerInput);
+            } else if(this.value==="closed"){
+                const varCountInput = document.createElement("input");
+                varCountInput.type="number";
+                varCountInput.min=1;
+                varCountInput.placeholder="Variant sayı";
+                variantContainer.appendChild(varCountInput);
+
+                varCountInput.addEventListener("input", function(){
+                    while(variantContainer.childNodes.length > 1){
+                        variantContainer.removeChild(variantContainer.lastChild);
+                    }
+                    const vCount = parseInt(this.value);
+                    for(let v=1; v<=vCount; v++){
+                        const varInput = document.createElement("input");
+                        varInput.type="text";
+                        varInput.placeholder=`Variant ${v}`;
+                        variantContainer.appendChild(varInput);
+                    }
+                    const correctInput = document.createElement("input");
+                    correctInput.type="number";
+                    correctInput.min=1;
+                    correctInput.placeholder="Düzgün variant nömrəsi";
+                    variantContainer.appendChild(correctInput);
+                });
+            }
+        });
+
+        container.appendChild(qDiv);
+    }
+});
+
+document.getElementById("submitContest").addEventListener("click", function(){
+    const title = document.getElementById("contestTitle").value.trim();
+    const groupCheckboxes = document.querySelectorAll("#groupCheckboxes input[type=checkbox]:checked");
+    const allowedGroups = Array.from(groupCheckboxes).map(cb => cb.value);
+    const startTime = document.getElementById("startTime").value;
+    const endTime = document.getElementById("endTime").value;
+
+    if(!title || allowedGroups.length===0 || !startTime || !endTime){
+        alert("Başlıq, qruplar və vaxtları doldurun!");
+        return;
+    }
+
+    const questionDivs = document.getElementById("questionsContainer").children;
+    const questions = [];
+
+    for(let qDiv of questionDivs){
+        const text = qDiv.querySelector("input[type=text]").value.trim();
+        const type = qDiv.querySelector("select").value;
+        let question = {text, type};
+        const variantContainer = qDiv.querySelector("div");
+        if(type==="closed"){
+            const variants = [...variantContainer.querySelectorAll("input[type=text]")].map(i=>i.value.trim());
+            const correctIndex = parseInt(variantContainer.querySelector("input[type=number]").value);
+            question.variants = variants;
+            question.correct = correctIndex;
+        } else if(type==="open"){
+            const correctAnswer = variantContainer.querySelector("input[type=text]").value.trim();
+            question.correct = correctAnswer;
+        }
+        questions.push(question);
+    }
+
+    const tests = JSON.parse(localStorage.getItem("tests")||"[]");
+    tests.push({title, allowedGroups, questions, startTime, endTime});
+    localStorage.setItem("tests", JSON.stringify(tests));
+
+    alert("Contest yaradıldı!");
+    document.getElementById("contestTitle").value="";
+    document.getElementById("questionCount").value="";
+    document.getElementById("questionsContainer").innerHTML="";
+    groupCheckboxes.forEach(cb=>cb.checked=false);
+    document.getElementById("startTime").value="";
+    document.getElementById("endTime").value="";
+});
+</script>
+
+</body>
+</html>

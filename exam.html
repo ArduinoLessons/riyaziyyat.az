@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>İmtahan</title>
+<style>
+body{font-family:sans-serif;background:#f0fdf4;margin:0;padding:20px}
+h2{text-align:center;margin-bottom:20px}
+.test{background:#fff;padding:15px;margin:15px 0;border-radius:6px;border:1px solid #ccc}
+label{display:block;margin-top:8px}
+input[type=text]{width:95%;padding:6px;margin-top:4px;border-radius:4px;border:1px solid #ccc}
+button{background:#16a34a;color:#fff;border:none;padding:10px 15px;border-radius:6px;cursor:pointer;margin-top:10px;font-size:16px}
+</style>
+</head>
+<body>
+
+<h2>İmtahan</h2>
+<div id="testContainer"></div>
+
+<script>
+const student = JSON.parse(localStorage.getItem("currentStudent")||"{}");
+const exam = JSON.parse(localStorage.getItem("currentExam")||"{}");
+if(!student.name || !exam.title){ alert("İmtahan seçilməyib!"); window.location.href="dashboard_student.html"; }
+
+const container = document.getElementById("testContainer");
+const form = document.createElement("form");
+
+exam.questions.forEach((q,idx)=>{
+    const div = document.createElement("div");
+    const label = document.createElement("label");
+    label.innerText = `${idx+1}. ${q.text}`;
+    div.appendChild(label);
+
+    const input = document.createElement("input");
+    input.type="text";
+    input.name=`q${idx}`;
+    div.appendChild(input);
+
+    form.appendChild(div);
+});
+
+const submitBtn = document.createElement("button");
+submitBtn.type="submit";
+submitBtn.innerText="Cavabları Göndər";
+form.appendChild(submitBtn);
+
+// İmtahan bitir düyməsi
+const endBtn = document.createElement("button");
+endBtn.type="button";
+endBtn.innerText="İmtahanı Bitir";
+endBtn.style.marginTop="20px";
+form.appendChild(endBtn);
+
+endBtn.addEventListener("click", ()=>{
+    if(confirm("Bitirmək istədiyinizdən əminsiniz?")){
+        let finishedExams = JSON.parse(localStorage.getItem("finishedExams")||"[]");
+        finishedExams.push({studentId: student.id, testId: exam.id, cheated:false});
+        localStorage.setItem("finishedExams", JSON.stringify(finishedExams));
+        localStorage.setItem(`exam_${student.id}_${exam.id}_done`, "true");
+        alert("İmtahan tamamlandı!");
+        window.location.href="dashboard_student.html";
+    }
+});
+
+// Submit cavablar
+form.addEventListener("submit", function(e){
+    e.preventDefault();
+    const answers={};
+    exam.questions.forEach((q,idx)=>{
+        answers[`q${idx}`]=form.querySelector(`input[name=q${idx}]`).value.trim();
+    });
+
+    const submissions=JSON.parse(localStorage.getItem("submissions")||"[]");
+    submissions.push({
+        student: student.name,
+        group: student.group,
+        testTitle: exam.title,
+        answers
+    });
+    localStorage.setItem("submissions", JSON.stringify(submissions));
+    alert("Cavablar göndərildi!");
+    form.reset();
+});
+
+// Cheating yoxlamaları
+function studentCheated(){
+    alert("İmtahandan çıxarıldınız! Nəticəniz ləğv edildi.");
+    let cheated = JSON.parse(localStorage.getItem("cheatedStudents")||"[]");
+    cheated.push({name: student.name, surname: student.surname, group: student.group, testId: exam.id});
+    localStorage.setItem("cheatedStudents", JSON.stringify(cheated));
+    localStorage.setItem(`exam_${student.id}_${exam.id}_done`, "true");
+    window.location.href="dashboard_student.html";
+}
+
+window.addEventListener("blur", studentCheated);
+document.addEventListener("fullscreenchange", ()=>{
+    if(!document.fullscreenElement) studentCheated();
+});
+
+container.appendChild(form);
+</script>
+
+</body>
+</html>

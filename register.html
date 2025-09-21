@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>Qeydiyyat (Şagird)</title>
+<style>
+body{font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;background:#f0fdf4;margin:0}
+.card{background:#fff;padding:20px;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.1);width:320px}
+h2{text-align:center}
+input,select{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:6px}
+button{width:100%;padding:10px;border:none;background:#16a34a;color:white;border-radius:6px;font-weight:bold;cursor:pointer}
+a{display:block;text-align:center;margin-top:10px;color:#16a34a;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>Qeydiyyat (Şagird)</h2>
+<form id="registerForm">
+  <input type="text" id="name" placeholder="Ad" required>
+  <input type="text" id="surname" placeholder="Soyad" required>
+  <input type="text" id="class" placeholder="Sinif" required>
+  <input type="text" id="parent" placeholder="Valideyn əlaqə nömrəsi" required>
+  <select id="group" required>
+    <option value="">Qrupunuzu seçin</option>
+    <option value="10(1,3)">10(1,3)</option>
+    <option value="10(2,4)">10(2,4)</option>
+    <option value="9(1,3)">9(1,3)</option>
+    <option value="10S">10S</option>
+  </select>
+  <input type="email" id="email" placeholder="E-mail" required>
+  <input type="password" id="pass" placeholder="Yeni şifrə" required>
+  <input type="password" id="pass2" placeholder="Şifrəni təkrar daxil edin" required>
+  <button type="submit">Qeydiyyat</button>
+</form>
+<a href="login.html">Artıq hesabınız var? Login</a>
+</div>
+
+<script>
+document.getElementById("registerForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const name = document.getElementById("name").value.trim();
+    const surname = document.getElementById("surname").value.trim();
+    const cls = document.getElementById("class").value.trim();
+    const parent = document.getElementById("parent").value.trim();
+    const group = document.getElementById("group").value;
+    const email = document.getElementById("email").value.trim();
+    const pass = document.getElementById("pass").value.trim();
+    const pass2 = document.getElementById("pass2").value.trim();
+
+    if(pass !== pass2){ 
+        alert("Şifrələr uyğun gəlmir!"); 
+        return; 
+    }
+
+    let students = JSON.parse(localStorage.getItem("students")||"[]");
+
+    // təkrarlanan email yoxlanışı
+    if(students.some(s => s.email === email)){
+        alert("Bu email ilə artıq qeydiyyat var!");
+        return;
+    }
+
+    students.push({name,surname,cls,parent,group,email,pass});
+    localStorage.setItem("students", JSON.stringify(students));
+    alert("Qeydiyyat tamamlandı!");
+    window.location.href="login.html";
+});
+</script>
+</body>
+</html>

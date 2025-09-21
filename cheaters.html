@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<title>Xaric olunan şagirdlər</title>
+<style>
+body{font-family:sans-serif;background:#f0fdf4;margin:20px}
+h2{text-align:center;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{border:1px solid #ccc;padding:8px;text-align:center}
+th{background:#2563eb;color:#fff}
+</style>
+</head>
+<body>
+
+<h2>Xaric olunan şagirdlər</h2>
+<div id="cheatersContainer"></div>
+
+<script>
+function loadCheaters() {
+    const container = document.getElementById("cheatersContainer");
+    container.innerHTML = "";
+
+    const cheaters = JSON.parse(localStorage.getItem("cheatedStudents")||"[]");
+
+    if(cheaters.length === 0){
+        container.innerHTML = "<p>Heç bir şagird xaric olunmayıb.</p>";
+        return;
+    }
+
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    thead.innerHTML = "<tr><th>Ad</th><th>Soyad</th><th>Qrup</th><th>Test ID</th></tr>";
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    cheaters.forEach(c=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${c.name}</td><td>${c.surname}</td><td>${c.group}</td><td>${c.testId}</td>`;
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    container.appendChild(table);
+}
+
+loadCheaters();
+</script>
+
+</body>
+</html>
